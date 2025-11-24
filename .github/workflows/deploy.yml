@@ -1,0 +1,80 @@
+name: CI/CD Pipeline to AWS EC2
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  AWS_REGION: ${{ secrets.AWS_REGION }}
+  ECR_REPOSITORY: affiliate_wallet # Your ECR repository name
+  # Remove ECS_SERVICE, ECS_CLUSTER, ECS_TASK_DEFINITION
+
+jobs:
+  build-and-deploy:
+    name: Build, Push, and Deploy to EC2
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout and AWS Login (Same as before)
+      - name: ⬇️ Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🔑 Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: 🏗️ Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: 🔨 Build and Tag the Docker Image
+        id: build-image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:latest
+
+      - name: ⏫ Push Docker Image to ECR
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
+
+      # -----------------------------------------------
+      # 2. EC2 DEPLOYMENT VIA SSH (REPLACES ECS STEPS)
+      # -----------------------------------------------
+      - name: 🚀 Deploy to EC2 via SSH
+        uses: appleboy/ssh-action@v1.0.3 # Use a community action for SSH
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          # The script to run on the EC2 instance to pull and restart the container
+          script: |
+            # 1. Login to ECR on the EC2 instance (requires AWS CLI on EC2)
+            # Alternatively, you can pull from DockerHub if you use that instead of ECR
+            $(aws ecr get-login-password --region ${{ env.AWS_REGION }} | docker login --username AWS --password-stdin ${{ steps.login-ecr.outputs.registry }})
+
+            # 2. Pull the newly pushed image
+            docker pull ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:latest
+
+            # 3. Stop and remove the old container (ignore errors if it doesn't exist: "|| true")
+            docker stop affiliate-wallet-app || true
+            docker rm affiliate-wallet-app || true
+
+            # 4. Run the new container (using the correct -p and -e PORT flags)
+            # NOTE: Set the container name to something consistent (e.g., affiliate-wallet-app)
+            # NOTE: Replace 3011 with the desired external port and -e PORT if different.
+            docker run -d \
+              --name affiliate-wallet-app \
+              -p 3011:3011 \
+              -e PORT=3011 \
+              ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:latest

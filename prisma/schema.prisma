@@ -1,0 +1,1127 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Affiliates {
+  ID                Int     @id @default(autoincrement())
+  First_Name        String? @db.VarChar(50)
+  Last_Name         String? @db.VarChar(45)
+  User_Name         String? @db.VarChar(50)
+  Type              Int     @default(0) @db.TinyInt
+  Password          String? @db.VarChar(50)
+  SubAffiliate      Int?
+  Jteam             Int?
+  Email             String? @db.VarChar(60)
+  LMSCredential     Int?    @default(0) @db.TinyInt
+  ReferralCode      String? @db.VarChar(45)
+  sc_attempt_status Int
+  active_affiliate  Int     @default(0)
+  affiliate_type    String  @db.VarChar(255)
+  commission        Float   @db.Float
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model Book4 {
+  id           Int?    @map("ï»¿id")
+  client_email String? @db.Text
+  booklet_id   String? @db.Text
+
+  @@ignore
+}
+
+model Booklet {
+  ID         Int     @id @default(autoincrement())
+  BookletNo  String  @db.VarChar(20)
+  Order_ID   Int
+  DGC_Amount Float
+  SI_Number  String? @db.VarChar(9)
+}
+
+model CRM_Affiliate_Active {
+  Id          Int    @id @default(autoincrement())
+  Affilate_Id Int
+  First_Name  String @db.VarChar(30)
+  Last_Name   String @db.VarChar(30)
+  Start_Time  Int
+  End_Time    Int
+}
+
+model CRM_BidsCategory {
+  ID   Int     @id
+  Name String? @db.VarChar(45)
+}
+
+model CRM_ClientIssue {
+  ID   Int     @id
+  Name String? @db.VarChar(25)
+}
+
+model CRM_Distribution_Activities {
+  id               Int @id @default(autoincrement())
+  province_id      Int
+  affiliate_id     Int
+  amount_get_leads Int
+}
+
+model CRM_Distribution_Methods {
+  id          Int @id @default(autoincrement())
+  province_id Int
+  status      Int @db.TinyInt
+}
+
+model CRM_InterestStatus {
+  ID   Int     @id
+  Name String? @db.VarChar(25)
+}
+
+model CRM_LeadsActivity {
+  ID             Int
+  DateTime       DateTime  @db.DateTime(0)
+  InterestStatus String?   @db.VarChar(25)
+  ClientIssue    String    @db.VarChar(25)
+  NextContact    DateTime? @db.DateTime(0)
+  Summary        String?   @db.Text
+  User_ID        Int
+  User_Name      String    @db.VarChar(55)
+
+  @@id([ID, DateTime])
+}
+
+model CRM_LeadsMain {
+  ID             Int       @id @default(autoincrement())
+  First_Name     String?   @db.VarChar(45)
+  Last_Name      String?   @db.VarChar(65)
+  Email          String?   @db.VarChar(55)
+  Province       String?   @db.VarChar(25)
+  City           String?   @db.VarChar(95)
+  Phone          String?   @db.VarChar(45)
+  Source         String?   @db.VarChar(45)
+  Process_Status String?   @default("Never Contacted") @db.VarChar(45)
+  EntryDate      DateTime? @db.DateTime(0)
+  User_Name      String?   @db.VarChar(55)
+  User_ID        Int
+  Reffered_by    String    @db.VarChar(45)
+  NextContact    DateTime  @db.DateTime(0)
+  InterestStatus String    @db.VarChar(25)
+  ClientIssue    String    @db.VarChar(25)
+  LMS_ID         Int       @default(0)
+}
+
+model CRM_LeadsSource {
+  ID   Int     @id
+  Name String? @db.VarChar(45)
+}
+
+model CRM_Leads_Distribution {
+  id           Int @id @default(autoincrement())
+  province_id  Int
+  affiliate_id Int
+  num_of_leads Int
+  priority     Int
+}
+
+model CRM_Province {
+  Province_Id   Int    @id @default(autoincrement())
+  Province_Name String @db.VarChar(50)
+}
+
+model CRM_Refered_History {
+  ID           Int      @id @default(autoincrement())
+  Lead_ID      Int
+  Refer_by_ID  Int
+  Refer_ID     Int
+  Old_Owner_ID Int
+  Date_Time    DateTime @db.DateTime(0)
+}
+
+model Cash_Donation {
+  id      Int @id @default(autoincrement())
+  Order   Int
+  Percent Int
+}
+
+model Change_Password_Log {
+  id           Int      @id @default(autoincrement())
+  Client_Email Int
+  created_date DateTime @default(now()) @db.DateTime(0)
+}
+
+model Cities {
+  ID          Int    @id @default(autoincrement())
+  Province_ID Int
+  City_Name   String @db.VarChar(255)
+}
+
+model Clients {
+  ID               Int       @id @default(autoincrement())
+  First_Name       String?   @db.VarChar(20)
+  Last_Name        String?   @db.VarChar(30)
+  Password         String    @default("8cb2237d0679ca88db6464eac60da96345513964") @db.VarChar(50)
+  House_Number     String?   @db.VarChar(10)
+  Street           String?   @db.VarChar(30)
+  City             String?   @db.VarChar(20)
+  Province         Int?
+  Postal_Code      String?   @db.VarChar(20)
+  Cell_Phone       String?   @db.VarChar(20)
+  Telephone_Number String?   @db.VarChar(20)
+  Fax              String?   @db.VarChar(20)
+  Office_Phone     String?   @db.VarChar(20)
+  Office_Fax       String?   @db.VarChar(20)
+  Email_Adress     String?   @db.VarChar(35)
+  Status           Int?
+  Client_Status    Int       @default(0)
+  SI_Number        String?   @db.VarChar(9)
+  Source           Int       @default(0) @db.TinyInt
+  Verify_Status    Int?      @default(0)
+  verify_date      DateTime? @db.DateTime(0)
+  affiliate_id     Int?      @default(0)
+}
+
+model Clients_Orders {
+  Order_ID                    Int       @id @default(autoincrement())
+  Affiliate_ID                Int?
+  Client_ID                   Int?
+  Booklet_ID                  String?   @db.VarChar(255)
+  Order_Price                 Float
+  Date                        DateTime? @db.Date
+  Expiry_Date                 DateTime? @db.Date
+  Status                      Int?
+  Promo_Code                  String?   @db.VarChar(10)
+  Promo_Price                 Float     @db.Float
+  Payment_Method              String?   @db.VarChar(10)
+  UpdateDate                  DateTime? @db.Timestamp(0)
+  UpdateSaleDate              DateTime  @db.Date
+  Payment_Status              Int?      @default(0)
+  Agreement_String            String?   @db.VarChar(75)
+  Process_Status              Int?      @default(0)
+  Number_DGC                  Float     @db.Float
+  Price_DGC                   Float     @db.Float
+  Payment_Terms               Float     @db.Float
+  Initial_Deposit             Float?    @db.Float
+  Family_Income               Int?
+  Annual_Income               Int?
+  Donation_type               String    @db.VarChar(100)
+  Cash_Donation               Float     @db.Float
+  Cash_Donation_Amount        Float     @db.Float
+  Membership_PGC              Float     @db.Float
+  Membership_PGC_Amount       Float     @db.Float
+  Gift_Voucher_ID             String    @db.VarChar(100)
+  Gift_Voucher                Int?
+  Final_PPI                   Int?      @default(0)
+  Closing                     String    @db.VarChar(8)
+  Escrow_Profile              String    @db.VarChar(12)
+  MDBsubOrder                 String    @db.VarChar(15)
+  CPstatus                    Int       @default(0)
+  Charity_Id                  Int
+  payment_verification_status Int
+  order_source                String    @db.VarChar(255)
+  SIN_Status                  String?   @db.VarChar(255)
+  payment_link_button_status  Int
+  created_date                DateTime  @default(now()) @db.DateTime(0)
+  DS_ID                       String?   @db.VarChar(10)
+  Pills_Ordered               String?   @db.VarChar(255)
+  Confirmation_Status         Int?      @default(0)
+}
+
+model Closings {
+  ID      Int      @id
+  Closing String?  @db.VarChar(5)
+  Start   DateTime @db.Date
+  End     DateTime @db.Date
+}
+
+model Country {
+  id        Int     @id @default(autoincrement())
+  iso       String  @db.Char(2)
+  name      String  @db.VarChar(80)
+  nicename  String  @db.VarChar(80)
+  iso3      String? @db.Char(3)
+  numcode   Int?    @db.SmallInt
+  phonecode Int
+}
+
+model Create_Orders_Log {
+  id           Int      @id @default(autoincrement())
+  client_email String   @db.VarChar(255)
+  tab_id       Int
+  action_name  String   @db.VarChar(255)
+  action_value String   @db.VarChar(255)
+  created_at   DateTime @default(now()) @db.DateTime(0)
+}
+
+model Customers_Orders_Status {
+  ID     Int     @id
+  Status String? @db.VarChar(45)
+}
+
+model Customers_Status {
+  ID     Int     @id
+  Status String? @db.VarChar(45)
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model DGC_Parameters {
+  ID        Int
+  PPI_Years Float @db.Float
+  Interest  Float @db.Float
+
+  @@ignore
+}
+
+model DS_Clients {
+  id                           Int      @id @default(autoincrement())
+  order_id                     Int
+  booklet_id                   String   @db.VarChar(255)
+  user_id                      Int
+  client_name                  String   @db.VarChar(255)
+  loan_amount                  Int
+  ppi_amount                   Int
+  pill_id                      Int
+  pills_amount                 Int
+  calc_refundable_ppi_adjusted Decimal  @db.Decimal(12, 3)
+  cals_penalty                 Float    @db.Float
+  cals_net_creditable          Decimal  @db.Decimal(12, 3)
+  payment_to_settle_debt       Decimal  @db.Decimal(10, 4)
+  net_cost_settlement          Decimal  @db.Decimal(15, 6)
+  ds_date                      DateTime @db.Date
+  closing                      String   @db.VarChar(100)
+  popup_option                 Int
+  settlement_status            Int
+  phase_two_status             Int      @default(0)
+  group_precentage_status      Int      @default(0)
+  payment_type                 Int
+  daily_interest_rate          Int
+  tax_credits                  Decimal  @db.Decimal(12, 3)
+  all_payments_ppcn            Int
+  gift_voucher                 Decimal? @db.Decimal(12, 2)
+}
+
+model DS_Interest_price {
+  id             Int     @id @default(autoincrement())
+  interest_name  String  @db.VarChar(100)
+  interest_price Decimal @db.Decimal(10, 2)
+}
+
+model DS_Interest_price_old {
+  id             Int     @id @default(autoincrement())
+  interest_name  String  @db.VarChar(100)
+  interest_price Decimal @db.Decimal(10, 6)
+}
+
+model DS_Payment_Status {
+  id              Int      @id @default(autoincrement())
+  user_id         Int
+  order_id        Int
+  payment_id      Int
+  payment_type    Int
+  form_of_payment String   @db.VarChar(255)
+  amount          Decimal  @db.Decimal(10, 3)
+  payment_date    DateTime @db.DateTime(0)
+  status          Int
+  created_date    DateTime @default(now()) @db.DateTime(0)
+}
+
+model DS_log {
+  id           Int      @id @default(autoincrement())
+  user_id      Int
+  booklet_id   String   @db.VarChar(100)
+  action_name  String   @db.VarChar(255)
+  action_value String   @db.VarChar(255)
+  created_at   DateTime @default(now()) @db.DateTime(0)
+}
+
+model DS_video_log {
+  id                 Int      @id @default(autoincrement())
+  Client_ID          Int
+  Client_Name        String   @db.VarChar(255)
+  video_id           Int
+  video_name         String   @db.VarChar(255)
+  event_type         String   @db.VarChar(100)
+  video_current_time Float    @db.Float
+  total_watch_time   Int
+  percent_watched    Float    @db.Float
+  timestamp          DateTime @default(now()) @db.Timestamp(0)
+}
+
+model Debt_Settlement_Payment {
+  id              Int      @id @default(autoincrement())
+  Client_ID       Int
+  DS_ID           Int
+  Payment_ID      Int
+  Payment_type    Int
+  Amount          Float    @db.Float
+  Form_of_payment Int
+  payment_date    DateTime @db.Date
+  created_date    DateTime @db.DateTime(0)
+}
+
+model Default_Clients {
+  ID                   Int       @id @unique(map: "ID_UNIQUE") @default(autoincrement())
+  First_Name           String?   @db.VarChar(255)
+  Last_Name            String?   @db.VarChar(255)
+  Email                String?   @db.VarChar(255)
+  Reason_Class_Defence String?   @db.VarChar(255)
+  Comments             String?   @db.Text
+  created_at           DateTime? @db.DateTime(0)
+  updated_at           DateTime? @db.DateTime(0)
+}
+
+model Donation_type {
+  id   Int    @unique(map: "id") @default(autoincrement())
+  name String @db.VarChar(255)
+}
+
+model Email_Verification_Code {
+  id                Int      @id @default(autoincrement())
+  Temp_Client_ID    Int
+  verification_code String   @db.VarChar(255)
+  created_date      DateTime @default(now()) @db.DateTime(0)
+}
+
+model Employment_Status {
+  ID            Int      @id @default(autoincrement())
+  Client_ID     Int
+  Employer      String   @db.VarChar(50)
+  Job_Title     String   @db.VarChar(100)
+  Address       String   @db.VarChar(100)
+  Supervisor    String   @db.VarChar(50)
+  Province      String   @db.VarChar(50)
+  City          String   @db.VarChar(50)
+  Postal_Code   String   @db.VarChar(25)
+  Annual_Income Float
+  Phone         String   @db.VarChar(12)
+  Date_From     DateTime @db.Date
+  Date_To       DateTime @db.Date
+  Family_Income Float
+}
+
+model Expiry_Mail {
+  ID                Int     @id @default(autoincrement())
+  Expire_Day_Before Int?
+  Subject           String? @db.VarChar(150)
+  Content           String? @db.Text
+}
+
+model Family_Amounts {
+  OrderID    Int
+  RunerID    Int
+  FamilyName String? @db.VarChar(45)
+  LoanAmount Float?
+
+  @@id([OrderID, RunerID])
+}
+
+model Family_income {
+  id                Int      @id @default(autoincrement())
+  first_name        String?  @db.VarChar(255)
+  last_name         String?  @db.VarChar(255)
+  net_family_income String?  @db.VarChar(255)
+  client_email      String?  @db.VarChar(255)
+  created_date      DateTime @default(now()) @db.DateTime(0)
+}
+
+model Forget_Password_Log {
+  id           Int      @id @default(autoincrement())
+  Client_Email String   @db.VarChar(200)
+  Created_Date DateTime @default(now()) @db.DateTime(0)
+}
+
+model Gift_Vouchers {
+  id             Int       @id @default(autoincrement())
+  Client_Name    String    @db.VarChar(255)
+  voucher_code   String    @db.VarChar(100)
+  voucher_amount Int
+  voucher_rule   Float     @db.Float
+  status         Int
+  apply_status   Int
+  apply_date     DateTime? @db.DateTime(0)
+}
+
+model Login_Methods {
+  id          Int    @id @default(autoincrement())
+  method_name String @db.VarChar(100)
+}
+
+model Media {
+  id          Int      @id @default(autoincrement())
+  video_url   String   @db.VarChar(255)
+  video_title String   @db.VarChar(255)
+  video_desc  String   @db.VarChar(255)
+  created_at  DateTime @default(now()) @db.DateTime(0)
+}
+
+model Media_Events {
+  id                 Int      @id @default(autoincrement())
+  Client_ID          Int
+  Client_Name        String   @db.VarChar(255)
+  video_id           Int
+  video_name         String   @db.VarChar(255)
+  event_type         String   @db.VarChar(20)
+  Video_current_time Float?   @db.Float
+  total_watch_time   Int?
+  percent_watched    Float?   @db.Float
+  timestamp          DateTime @default(now()) @db.Timestamp(0)
+
+  @@index([Client_ID], map: "user_id")
+  @@index([id], map: "video_id")
+}
+
+model Media_SF {
+  id          Int      @id @default(autoincrement())
+  video_url   String   @db.VarChar(255)
+  video_title String   @db.VarChar(255)
+  video_desc  String   @db.VarChar(255)
+  created_at  DateTime @default(now()) @db.DateTime(0)
+}
+
+model PL_Payment_Status {
+  id              Int      @id @default(autoincrement())
+  user_id         Int
+  order_id        Int
+  payment_type    Int
+  amount          Int
+  payment_date    DateTime @db.DateTime(0)
+  form_of_payment String   @db.VarChar(255)
+  status          Int
+  created_date    DateTime @default(now()) @db.DateTime(0)
+}
+
+model PL_order {
+  id                         Int      @id @default(autoincrement())
+  user_id                    Int
+  PL_id                      Int
+  client_name                String   @db.VarChar(255)
+  loan_amount                Int
+  ppi_amount                 Int
+  pill_redemption_by_charity Int
+  pills_amount               Decimal  @db.Decimal(25, 11)
+  refundable                 Decimal  @db.Decimal(11, 6)
+  penalty                    Int
+  net_creditable             Decimal  @db.Decimal(11, 6)
+  payment_to_settle_debt     Decimal  @db.Decimal(10, 4)
+  net_cost_settlement        Decimal  @db.Decimal(15, 6)
+  pl_order_date              DateTime @db.Date
+  closing                    String   @db.VarChar(100)
+  popup_option               Int
+  settlement_status          Int
+  payment_type               Int
+  DS_ID                      String?  @db.VarChar(10)
+}
+
+model PL_pill_catalog {
+  id            Int     @id @default(autoincrement())
+  catalog_id    Int
+  pill_quantity String  @db.VarChar(200)
+  pill_price    Decimal @db.Decimal(10, 6)
+  charity_price Decimal @db.Decimal(11, 6)
+}
+
+model PL_popup_text {
+  id      Int    @id @default(autoincrement())
+  PL_text String @db.VarChar(255)
+}
+
+model PL_token_catalog {
+  id                   Int     @id
+  catalog_id           Int
+  token_quantity_start BigInt? @db.UnsignedBigInt
+  token_quantity_end   BigInt? @db.UnsignedBigInt
+  token_price          Decimal @db.Decimal(10, 6)
+}
+
+model PL_token_catalog_test {
+  id             Int     @id @default(autoincrement())
+  catalog_id     Int
+  token_quantity String  @db.VarChar(200)
+  token_price    Decimal @db.Decimal(10, 3)
+  charity_price  Decimal @db.Decimal(10, 3)
+}
+
+model PL_token_catalog_test_two {
+  id                   Int     @id @default(autoincrement())
+  catalog_id           Int
+  token_quantity_start Int
+  token_quantity_end   Int
+  token_price          Decimal @db.Decimal(10, 3)
+}
+
+model PR_Archive_Files {
+  ID          Int     @id
+  Header      String? @db.VarChar(80)
+  Description String? @db.VarChar(45)
+  Link        String? @db.VarChar(150)
+  Order       Int?
+  Status      Int?
+}
+
+model PR_Files_Builder {
+  ID          Int     @id
+  Status_Name String? @db.VarChar(45)
+  Dir         String? @db.VarChar(70)
+  File_Name   String? @db.VarChar(70)
+  Level       Int?
+  Add_Name    Int     @default(0) @db.TinyInt
+}
+
+model PR_General_Updates {
+  ID          Int     @id
+  Header      String? @db.VarChar(80)
+  Description String? @db.VarChar(45)
+  Link        String? @db.VarChar(80)
+  Order       Int?
+  Status      Int?
+}
+
+model PR_General_Values {
+  ID          Int     @id
+  Name        String? @db.VarChar(45)
+  Value       Int?
+  Description String? @db.VarChar(100)
+}
+
+model Payment_Status {
+  ID   Int     @id
+  Desc String? @db.VarChar(45)
+}
+
+model Payment_Terms {
+  ID    Int    @id @default(autoincrement())
+  Text  String @db.VarChar(25)
+  Value String @db.VarChar(25)
+}
+
+model Payments {
+  Order_ID     Int
+  Check_Number String?   @db.VarChar(20)
+  Check_Date   DateTime? @db.Date
+  Amount       Float?
+  Check_Name   String?   @db.VarChar(35)
+
+  @@id([Order_ID])
+}
+
+model Pricing {
+  ID             Int     @id
+  Payment_Method String? @db.VarChar(45)
+  Price          Float?
+  Payment        Int?
+}
+
+model Process_Status {
+  ID          Int     @id
+  Description String? @db.VarChar(45)
+}
+
+model Program_Information {
+  id              Int    @id @default(autoincrement())
+  promoter_id     Int
+  registry_type   Int
+  program_name    String @db.VarChar(255)
+  ts_id           String @db.VarChar(255)
+  program_year    Int
+  status          Int
+  registered_with String @db.VarChar(255)
+}
+
+model Promoter_Information {
+  id          Int    @id @default(autoincrement())
+  first_name  String @db.VarChar(255)
+  last_name   String @db.VarChar(255)
+  email       String @db.VarChar(255)
+  province    String @db.VarChar(255)
+  city        String @db.VarChar(255)
+  address     String @db.Text
+  postal_code String @db.VarChar(255)
+}
+
+model Province {
+  province_id                  Int    @id @default(autoincrement())
+  province_name                String @db.VarChar(50)
+  cra_provincial_donation_rate Float
+  province_timezone            String @db.VarChar(100)
+}
+
+model SOT_Receipt_No {
+  id             Int      @id @default(autoincrement())
+  Order_ID       Int
+  Client_ID      Int
+  SOT_receipt_no Int
+  created_at     DateTime @default(now()) @db.DateTime(0)
+}
+
+model Sales_Report {
+  ID     Int     @id
+  Email  String? @db.VarChar(45)
+  Status Int?
+  Type   Int?
+}
+
+model Setting {
+  id   Int    @id @default(autoincrement())
+  name String @db.VarChar(100)
+  val  String @db.VarChar(2000)
+}
+
+model Split_Affiliate_Commission {
+  id                           Int      @id @default(autoincrement())
+  Order_ID                     Int
+  current_affiliate_id         Int
+  assign_affiliate_id          Int
+  current_affiliate_percentage Float    @db.Float
+  assign_affiliate_percentage  Float    @db.Float
+  affiliate_comment            String   @db.Text
+  created_date                 DateTime @default(now()) @db.DateTime(0)
+}
+
+model Status_Legend {
+  ID      Int     @id
+  Icon    String? @db.VarChar(45)
+  Title   String? @db.VarChar(45)
+  Content String? @db.Text
+}
+
+model USP_Program {
+  id            Int      @id @default(autoincrement())
+  first_name    String   @db.VarChar(255)
+  last_name     String   @db.VarChar(255)
+  email_address String   @db.VarChar(255)
+  phone         String?  @db.VarChar(255)
+  province      String?  @db.VarChar(255)
+  city          String?  @db.VarChar(255)
+  address       String?  @db.Text
+  notes         String?  @db.VarChar(255)
+  tax_dispute   Int?
+  program1      String?  @db.VarChar(255)
+  year1         String?  @db.VarChar(255)
+  amount1       Int?
+  program2      String?  @db.VarChar(255)
+  year2         String?  @db.VarChar(255)
+  amount2       Int?
+  program3      String?  @db.VarChar(255)
+  year3         String?  @db.VarChar(255)
+  amount3       Int?
+  program4      String?  @db.VarChar(255)
+  year4         String?  @db.VarChar(255)
+  amount4       Int?
+  program5      String?  @db.VarChar(255)
+  year5         String?  @db.VarChar(255)
+  amount5       Int?
+  program6      String?  @db.VarChar(255)
+  year6         String?  @db.VarChar(255)
+  amount6       Int?
+  program7      String?  @db.VarChar(255)
+  year7         String?  @db.VarChar(255)
+  amount7       Int?
+  program8      String?  @db.VarChar(255)
+  year8         String?  @db.VarChar(255)
+  amount8       Int?
+  Total_amount  Int?
+  source        String?  @db.VarChar(100)
+  created_at    DateTime @db.DateTime(0)
+  updated_at    DateTime @db.DateTime(0)
+}
+
+model Updates {
+  ID                Int       @id @default(autoincrement())
+  TimeInTheAir      Int?
+  Identifier        Int?
+  HeaderDescription String?   @db.VarChar(300)
+  Description       String?   @db.VarChar(300)
+  DescriptionIsLink Int?
+  Start_Date        DateTime? @db.DateTime(0)
+  End_Date          DateTime? @db.DateTime(0)
+  Active            Int?
+  LocationAs        Int?
+  Update_Date       DateTime  @default(now()) @db.Timestamp(0)
+}
+
+model affiliate_details {
+  affiliate_id Int    @id @default(autoincrement())
+  user_id      Int
+  first_name   String @db.VarChar(50)
+  last_name    String @db.VarChar(50)
+  affiliate_no String @db.VarChar(50)
+}
+
+model api_access_user {
+  id                BigInt    @id @default(autoincrement())
+  name              String    @db.VarChar(255)
+  email             String    @db.VarChar(255)
+  email_verified_at DateTime  @default(now()) @db.Timestamp(0)
+  password          String    @db.VarChar(255)
+  remember_token    String?   @db.VarChar(100)
+  created_at        DateTime? @db.Timestamp(0)
+  updated_at        DateTime? @db.Timestamp(0)
+}
+
+model charities {
+  charity_id                  Int     @id @default(autoincrement())
+  charity_name                String  @db.VarChar(255)
+  charity_registration_number String  @db.VarChar(200)
+  c_country                   String? @db.VarChar(100)
+  charity_description         String? @db.LongText
+  charity_sort                Int
+  c_status                    Int
+}
+
+model charities_images {
+  id         Int    @id @default(autoincrement())
+  charity_id Int
+  image_name String @db.VarChar(255)
+}
+
+model contract_url_code {
+  id                 Int      @id @default(autoincrement())
+  order_no           Int
+  user_id            Int
+  url_code           String   @db.VarChar(255)
+  status             Int
+  payments_status    Int?     @default(0)
+  created_date       DateTime @default(now()) @db.DateTime(0)
+  contract_sign_date String   @db.VarChar(45)
+}
+
+model deleted_temp_clients {
+  id                     Int       @id @default(autoincrement())
+  First_Name             String    @db.VarChar(255)
+  Last_Name              String    @db.VarChar(255)
+  Email_Adress           String    @db.VarChar(255)
+  password               String    @db.VarChar(255)
+  cell_number            String    @db.VarChar(255)
+  province               Int
+  city                   String    @db.VarChar(255)
+  postal_code            String    @db.VarChar(100)
+  street                 String    @db.Text
+  salary_income          Int
+  family_income          Int
+  donation_amount        String    @db.VarChar(255)
+  SI_Number              String    @db.VarChar(9)
+  affiliate_id           Int
+  Verify_Status          Int
+  promo_code             String    @db.VarChar(100)
+  promo_saving_price     Int
+  order_source           String    @db.VarChar(100)
+  login_method           Int
+  current_step           Int
+  actual_step            Int
+  verify_date            DateTime  @db.DateTime(0)
+  first_login            Int
+  LoginCredentialsStatus Int
+  Cash_Donation          Float     @db.Float
+  Cash_Donation_Amount   Float     @db.Float
+  created_date           DateTime  @db.DateTime(0)
+  Gift_Voucher           Int
+  Gift_Voucher_ID        String    @db.VarChar(100)
+  Final_PPI              Int?      @default(0)
+  Date                   DateTime? @db.Date
+  Expiry_Date            DateTime? @db.Date
+}
+
+model documents_log {
+  id                Int      @id @default(autoincrement())
+  Client_ID         Int
+  Client_Email      String   @db.VarChar(255)
+  Document_Name     String   @db.VarChar(255)
+  Document_Category String   @db.VarChar(200)
+  created_date      DateTime @default(now()) @db.DateTime(0)
+}
+
+model donation_return {
+  id           Int      @id @default(autoincrement())
+  Client_ID    Int?
+  Order_ID     Int?
+  dr_status    Int?     @default(0)
+  created_date DateTime @default(now()) @db.DateTime(0)
+}
+
+model email_list_received {
+  id     Int    @id @default(autoincrement())
+  Email  String @db.VarChar(150)
+  Status Int
+}
+
+model helper_videos {
+  video_id     Int      @id @default(autoincrement())
+  video_page   String?  @db.VarChar(255)
+  video_sort   Int?
+  video_url    String?  @db.VarChar(255)
+  video_status Int?
+  created_date DateTime @default(now()) @db.DateTime(0)
+}
+
+model join_form_data {
+  visitor_id Int     @id @default(autoincrement())
+  fname      String  @db.VarChar(45)
+  Lname      String  @db.VarChar(45)
+  province   String  @db.VarChar(45)
+  email      String  @db.VarChar(100)
+  phone      String? @db.VarChar(20)
+  netincome  String? @db.VarChar(20)
+}
+
+model login {
+  id         Int    @id @default(autoincrement())
+  aff_number Int
+  aff_name   String @db.VarChar(255)
+  ip_address String @db.VarChar(255)
+}
+
+model login_users {
+  id         Int      @id @default(autoincrement())
+  username   String   @db.VarChar(255)
+  email      String   @db.VarChar(255)
+  password   String   @db.VarChar(255)
+  created_at DateTime @default(now()) @db.DateTime(0)
+}
+
+model loyalty_points {
+  id            Int      @id @default(autoincrement())
+  Client_ID     Int
+  Program_name  String   @db.VarChar(100)
+  Client_Points Int
+  updated_at    DateTime @db.DateTime(0)
+  created_at    DateTime @default(now()) @db.DateTime(0)
+}
+
+model my_account_log {
+  id           Int      @id @default(autoincrement())
+  client_email String   @db.VarChar(255)
+  order_year   Int
+  booklet_id   String   @db.VarChar(100)
+  action       String   @db.VarChar(255)
+  created_at   DateTime @default(now()) @db.DateTime(0)
+}
+
+model personal_access_tokens {
+  id             BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
+  tokenable_type String    @db.VarChar(255)
+  tokenable_id   BigInt    @db.UnsignedBigInt
+  name           String    @db.VarChar(255)
+  token          String    @unique(map: "personal_access_tokens_token_unique") @db.VarChar(64)
+  abilities      String?   @db.Text
+  last_used_at   DateTime? @db.Timestamp(0)
+  created_at     DateTime? @db.Timestamp(0)
+  updated_at     DateTime? @db.Timestamp(0)
+
+  @@index([tokenable_type, tokenable_id], map: "personal_access_tokens_tokenable_type_tokenable_id_index")
+}
+
+model pl_settlement_log {
+  id           Int      @id @default(autoincrement())
+  user_id      Int
+  pl_order_id  Int
+  popup_option Int
+  settledDate  DateTime @db.DateTime(0)
+}
+
+model promo_code {
+  id            Int      @id @default(autoincrement())
+  promo_code    String   @db.VarChar(100)
+  promo_value   Decimal  @db.Decimal(16, 16)
+  starting_date DateTime @db.DateTime(0)
+  ending_date   DateTime @db.DateTime(0)
+  status        Int
+}
+
+model promo_code_Old {
+  id                        Int      @id @default(autoincrement())
+  promo_code                String   @db.VarChar(10)
+  ts_program                String   @db.VarChar(50)
+  original_application_year String   @db.VarChar(10)
+  ta_application_version    String   @db.VarChar(10)
+  promo_start_date          DateTime @db.Date
+  promo_end_date            DateTime @db.Date
+  minimum_debt_amt          Int
+  discount                  Float
+  maximum_debt_amount       Int?
+  status_of_type            Int?
+}
+
+model receipts {
+  id           Int      @id @default(autoincrement())
+  Order_ID     Int
+  Client_ID    Int
+  receipt_name String   @db.VarChar(255)
+  receipt_no   Int
+  created_at   DateTime @db.DateTime(0)
+}
+
+model redeemed_booklet_ids {
+  id         Int    @id @default(autoincrement())
+  booklet_id String @db.VarChar(255)
+  batch_id   Int
+}
+
+model response_documents {
+  id           Int      @id @default(autoincrement())
+  Client_ID    Int
+  res_doc_name String   @db.VarChar(255)
+  res_doc_desc String   @db.Text
+  created_at   DateTime @default(now()) @db.DateTime(0)
+}
+
+model settlement_period {
+  id                Int      @id @default(autoincrement())
+  text              String   @db.VarChar(200)
+  settle_start_date DateTime @db.Date
+  settle_end_date   DateTime @db.Date
+  status            Int
+}
+
+model signin_log {
+  id          Int      @id @default(autoincrement())
+  user_id     Int
+  client_name String   @db.VarChar(255)
+  login_time  DateTime @default(now()) @db.DateTime(0)
+  user_ip     String   @db.VarChar(255)
+}
+
+model signup_email_log {
+  id         Int      @id @default(autoincrement())
+  user_email String   @db.VarChar(255)
+  user_ip    String   @db.Text
+  created_at DateTime @default(now()) @db.DateTime(0)
+  updated_at DateTime @db.DateTime(0)
+}
+
+model temp_affiliate {
+  id                  Int      @id @default(autoincrement())
+  ref_affiliate_id    Int      @default(0)
+  title               String   @default("") @db.VarChar(50)
+  email               String   @default("") @db.VarChar(250)
+  first_name          String   @default("") @db.VarChar(100)
+  last_name           String   @default("") @db.VarChar(100)
+  company             String   @default("") @db.VarChar(255)
+  phone               String   @default("") @db.VarChar(100)
+  hear_about_us       String   @db.VarChar(255)
+  hear_about_us_other String?  @db.VarChar(255)
+  profession          String   @db.VarChar(255)
+  profession_other    String?  @db.VarChar(255)
+  country             String   @default("") @db.VarChar(255)
+  province            String   @default("") @db.VarChar(255)
+  city                String   @default("") @db.VarChar(255)
+  postal_code         String   @default("") @db.VarChar(255)
+  street              String   @default("") @db.VarChar(255)
+  fee                 Int      @default(0)
+  created_date        DateTime @default(now()) @db.DateTime(0)
+}
+
+model temp_affiliate_verification {
+  id               Int      @id @default(autoincrement())
+  affiliateEmail   String?  @db.VarChar(255)
+  verificationCode String?  @db.VarChar(255)
+  verifyStatus     Int?
+  createdAt        DateTime @db.DateTime(0)
+}
+
+model temp_clients {
+  ID                     Int       @id @default(autoincrement())
+  First_Name             String    @db.VarChar(255)
+  Last_Name              String    @db.VarChar(255)
+  Email_Adress           String    @db.VarChar(255)
+  password               String?   @db.VarChar(255)
+  cell_number            String    @db.VarChar(255)
+  province               Int
+  city                   String    @db.VarChar(255)
+  postal_code            String    @db.VarChar(100)
+  street                 String    @db.Text
+  salary_income          Int
+  family_income          Int
+  donation_amount        String?   @db.VarChar(225)
+  SI_Number              String    @db.VarChar(9)
+  affiliate_id           Int
+  Verify_Status          Int
+  promo_code             String    @default("0") @db.VarChar(100)
+  promo_saving_price     Int
+  order_source           String    @db.VarChar(100)
+  login_method           Int
+  current_step           Int
+  actual_step            Int
+  verify_date            DateTime  @db.DateTime(0)
+  first_login            Int       @default(0)
+  LoginCredentialsStatus Int
+  Cash_Donation          Float     @db.Float
+  Cash_Donation_Amount   Float     @db.Float
+  created_date           DateTime  @default(now()) @db.DateTime(0)
+  Gift_Voucher           Int?
+  Gift_Voucher_ID        String    @db.VarChar(100)
+  Final_PPI              Int?      @default(0)
+  Date                   DateTime? @db.Date
+  Expiry_Date            DateTime? @db.Date
+}
+
+model temp_contract {
+  id            Int      @id @default(autoincrement())
+  email         String   @db.VarChar(255)
+  user_id       Int
+  order_id      Int
+  pdf_file_name String   @db.VarChar(255)
+  generate_date DateTime @db.DateTime(0)
+}
+
+model temp_record {
+  id          Int      @id @default(autoincrement())
+  tempDate    DateTime @db.Date
+  tempTuesday Int
+  tempHour    DateTime @db.Time(0)
+  tempStart   Int
+  tempNOL     Int
+  tempResult  Int
+}
+
+model tokenSysBookletId {
+  id           Int      @id @default(autoincrement())
+  client_email String   @db.VarChar(255)
+  booklet_id   String   @db.VarChar(255)
+  created_at   DateTime @default(now()) @db.DateTime(0)
+}
+
+model tokenSysClients {
+  id              Int      @id @default(autoincrement())
+  Client_Name     String   @db.VarChar(255)
+  Client_Email    String   @db.VarChar(255)
+  Password        String   @db.VarChar(255)
+  batch_id        Int
+  transfer_status Int
+  created_at      DateTime @default(now()) @db.DateTime(0)
+}
+
+model topup_option {
+  id           Int       @id @default(autoincrement())
+  Client_ID    Int?
+  Order_ID     Int?
+  topup_option Int?
+  created_date DateTime? @default(now()) @db.DateTime(0)
+}
+
+model track_referral_code {
+  id            Int      @id @default(autoincrement())
+  ref_code      String   @db.VarChar(255)
+  ip            String   @db.VarChar(255)
+  city          String   @db.VarChar(255)
+  region        String   @db.VarChar(255)
+  country       String   @db.VarChar(255)
+  user_timezone String   @db.VarChar(255)
+  user_browser  String   @db.VarChar(255)
+  created_date  DateTime @default(now()) @db.DateTime(0)
+}
+
+model track_url_data {
+  id           Int      @id @default(autoincrement())
+  Client_ID    Int?
+  Order_ID     Int?
+  created_date DateTime @default(now()) @db.DateTime(0)
+}
+
+model uploaded_documents {
+  id            Int      @id @default(autoincrement())
+  Client_ID     Int
+  document_name String   @db.VarChar(255)
+  document_desc String   @db.Text
+  created_at    DateTime @default(now()) @db.DateTime(0)
+}
