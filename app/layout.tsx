@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import React, { Suspense } from "react";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { AffiliateDetails } from "@/lib/AffiliateContext";
@@ -28,7 +29,9 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <AffiliateDetails>{children}</AffiliateDetails>
+        <Suspense fallback={<div>Loading...</div>}>
+          <AffiliateDetails>{children}</AffiliateDetails>
+        </Suspense>
       </body>
     </html>
   );

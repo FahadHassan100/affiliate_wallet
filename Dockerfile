@@ -18,9 +18,12 @@ RUN \
 FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
+
 COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* ./
 
 COPY . .
+
+
 # Generate Prisma client with the correct binary
 RUN npx prisma generate
 
