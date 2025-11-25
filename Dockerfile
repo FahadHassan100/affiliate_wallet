@@ -1,7 +1,5 @@
 FROM node:20-alpine AS base
 
-RUN apk add --no-cache openssl
-
 # Install dependencies only when needed
 FROM base AS deps
 # RUN apk add --no-cache libc6-compat openssl
@@ -25,7 +23,7 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* ./
 
 # Copy your Prisma schema before generate
-COPY --from=builder /app/prisma ./prisma
+COPY prisma ./prisma
 
 COPY . .
 
@@ -47,7 +45,6 @@ WORKDIR /app
 
 # Add OpenSSL for runtime
 RUN apk add --no-cache openssl
-
 
 
 # Copy build artifacts
