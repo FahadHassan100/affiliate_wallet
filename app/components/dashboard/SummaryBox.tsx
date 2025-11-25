@@ -15,9 +15,11 @@ export const SummaryBox = (props: props) => {
   console.log("This is Affiliate Id in summary box: ", props.affiliate_id);
 
   useEffect(() => {
+    console.log("this is before function of getAffiliate");
     const getAffiliate = async () => {
+      console.log("this is inside getAffiliate");
       const affilateData = await getAffiliateDetails(props.affiliate_id);
-      setLoginAffiliate(affilateData);
+      //setLoginAffiliate(affilateData);
       console.log("This is affiliate Data: ", affilateData);
     };
 
@@ -27,11 +29,11 @@ export const SummaryBox = (props: props) => {
   return (
     <div className="w-full max-w-6xl mx-auto">
       <div className="flex justify-center">
-        {loginAffiliate && loginAffiliate.affiliate_type === "Agent" ? (
+        {/* {loginAffiliate && loginAffiliate.affiliate_type === "Agent" ? (
           <AffiliateSummaryBox affiliate_id={props.affiliate_id} />
         ) : (
           <ReferralSummaryBox />
-        )}
+        )} */}
       </div>
     </div>
   );
