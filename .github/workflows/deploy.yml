@@ -99,9 +99,10 @@ jobs:
 
             # 6. Run the new container 
             docker run -d \
-              --name affiliate-wallet-app \
-              -p 3011:3011 \
-              -e PORT=3011 \
-              $FULL_IMAGE_NAME
+            --name affiliate-wallet-app \
+            -p 3011:3011 \
+            -e PORT=3011 \
+            -e DATABASE_URL="${{ secrets.DATABASE_URL }}" \
+            $FULL_IMAGE_NAME
 
             echo "--- Deployment Complete ---"
