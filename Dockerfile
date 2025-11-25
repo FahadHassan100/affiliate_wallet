@@ -29,7 +29,7 @@ COPY . .
 
 
 # Generate Prisma client with the correct binary
-RUN npx prisma generate --schema=./prisma/schema.prisma --skip-install
+RUN npx prisma generate
 
 # Build the Next.js app
 RUN \
