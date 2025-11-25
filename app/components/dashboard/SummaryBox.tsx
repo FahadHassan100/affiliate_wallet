@@ -14,6 +14,7 @@ export const SummaryBox = (props: props) => {
     const getAffiliate = async () => {
       const affilateData = await getAffiliateDetails(props.affiliate_id);
       setLoginAffiliate(affilateData);
+      console.log("This is affiliate Data: ", affilateData);
     };
 
     getAffiliate();

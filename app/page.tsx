@@ -12,7 +12,7 @@ export default function Home() {
   const [checkAffT, setCheckAffT] = useState();
 
   const searchParams: any = useSearchParams();
-  const affiliateID = parseInt(searchParams.get("uid"));
+  const affiliateID = searchParams.get("uid");
   //const affiliateID = 1111;
 
   console.log("This is login Affiliate:", affiliateID);
