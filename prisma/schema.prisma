@@ -42,6 +42,25 @@ model Booklet {
   SI_Number  String? @db.VarChar(9)
 }
 
+model commission {
+  id                    Int      @id @default(autoincrement())
+  Order_ID              Int
+  Seller_ID             Int
+  Affiliate_ID          Int
+  Commission_Type       String   @db.VarChar(30)
+  NetPPI                Int
+  Commission_Percentage Int
+  Commission_Amount     Int
+  created_at            DateTime @default(now()) @db.DateTime(0)
+}
+
+model overriding {
+  id                    Int @id @default(autoincrement())
+  Affiliate_ID          Int
+  Overriding_Agent      Int
+  Overriding_Percentage Int
+}
+
 model CRM_Affiliate_Active {
   Id          Int    @id @default(autoincrement())
   Affilate_Id Int

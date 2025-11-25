@@ -5,7 +5,6 @@ import { OrdersTable } from "./components/dashboard/OrdersTable";
 import logoImage from "../public/logo.png";
 import Image from "next/image";
 import Sidebar from "./components/dashboard/Sidebar";
-import { getAffiliateSession, getAllAffiliates } from "@/services/CRUD";
 import { useSearchParams } from "next/navigation";
 
 export default function Home() {
@@ -13,9 +12,8 @@ export default function Home() {
   const [checkAffT, setCheckAffT] = useState();
 
   const searchParams = useSearchParams();
-  const userId = searchParams.get("uid");
-
-  console.log(userId);
+  //const userId = searchParams.get("uid");
+  const affiliateID = 1111;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -32,7 +30,7 @@ export default function Home() {
           </div>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
             {/* Summary Boxes */}
-            <SummaryBox affiliate_type={affiliateType} />
+            <SummaryBox affiliate_id={affiliateID} />
             {/* Orders Table */}
             <OrdersTable />
           </div>

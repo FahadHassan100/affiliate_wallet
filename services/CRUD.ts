@@ -2,7 +2,7 @@
 import { db } from "@/lib/db";
 
 
-export const getAffiliateSession = async () => {
+/* export const getAffiliateSession = async () => {
 
     const passData = [{ action: "checkSession" }];
     fetch(
@@ -44,6 +44,60 @@ export const getAffiliateSession = async () => {
           
         }
       });
+} */
+
+export const getAffiliateDetails = async (aff_id: number) => {
+    
+    try {
+        const affiliateData = await db.affiliates.findUnique({
+          where: {
+            ID: aff_id,
+          }
+        });
+        return affiliateData;
+
+    } catch (error) {
+        throw error
+    }
+
+}
+
+export const getAffiliateCommission = async (aff_id: number) => {
+    
+    try {
+
+        const aff_commission = await db.commission.aggregate({
+          _sum: {NetPPI: true},
+          where: {
+            Affiliate_ID: aff_id,
+            Commission_Type: "Commission"
+          }
+        });
+        return aff_commission;
+
+    } catch (error) {
+        throw error
+    }
+
+}
+
+export const getAffiliateOverride = async (aff_id: number) => {
+    
+    try {
+
+        const aff_override = await db.commission.aggregate({
+          _sum: {NetPPI: true},
+          where: {
+            Affiliate_ID: aff_id,
+            Commission_Type: "Override"
+          }
+        });
+        return aff_override;
+
+    } catch (error) {
+        throw error
+    }
+
 }
 
 export const getAllAffiliates = async () => {
