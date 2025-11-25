@@ -64,28 +64,31 @@ jobs:
             # Use the specific Git SHA as the tag for deployment
             IMAGE_TAG=${{ github.sha }}
           script: |
-            # 1. FIX: Use AWS CLI to get ECR login password and pipe it directly to docker login
-            # Ensure AWS CLI is installed and configured on the EC2 instance
-            # NOTE: This command assumes your EC2 instance's IAM Role has permissions 
-            #       to access ECR (ecr:GetAuthorizationToken).
-
-            # Use the REGION from GitHub Actions env for authentication
-            ECR_PASSWORD=$(aws ecr get-login-password --region ${{ env.AWS_REGION }})
-
-            if [ $? -ne 0 ]; then
-              echo "Error: AWS ECR login failed. Check AWS CLI and IAM permissions on EC2."
+            # 1. Login to ECR on the EC2 instance
+            # Check if ECR_REGISTRY is passed (it should be now)
+            if [ -z "$ECR_REGISTRY" ]; then
+              echo "Fatal Error: ECR_REGISTRY is missing in SSH environment."
               exit 1
             fi
 
-            echo $ECR_PASSWORD | docker login --username AWS --password-stdin $ECR_REGISTRY
+            # Use the REGION from GitHub Actions env for authentication
+            # The AWS_REGION is a job-level env set earlier: ${{ env.AWS_REGION }}
+            ECR_PASSWORD=$(aws ecr get-login-password --region ${{ env.AWS_REGION }})
+
+            if [ $? -ne 0 ]; then
+              echo "Error: AWS ECR login failed."
+              exit 1
+            fi
+
+            # 2. Execute docker login command using the variable
+            echo "$ECR_PASSWORD" | docker login --username AWS --password-stdin "$ECR_REGISTRY"
 
             if [ $? -ne 0 ]; then
               echo "Error: Docker login failed."
               exit 1
             fi
 
-            # 2. Pull the NEW, immutable, SHA-tagged image
-            # The full image reference is now correctly formatted and pulled
+            # 3. Pull and Run the image (as before, but now with correct variables)
             FULL_IMAGE_NAME="$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
             docker pull $FULL_IMAGE_NAME
 
