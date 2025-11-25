@@ -49,7 +49,7 @@ jobs:
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
 
       # -----------------------------------------------
-      # 2. EC2 DEPLOYMENT VIA SSH (REPLACES ECS STEPS)
+      # 2. EC2 DEPLOYMENT VIA SSH
       # -----------------------------------------------
       - name: 🚀 Deploy to EC2 via SSH
         uses: appleboy/ssh-action@v1.0.3
@@ -57,30 +57,30 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          # 💡 IMPORTANT FIX: Pass the necessary variables to the remote host
-          envs: |
-            ECR_REGISTRY=${{ steps.login-ecr.outputs.registry }}
-            ECR_REPOSITORY=${{ env.ECR_REPOSITORY }}
-            # Use the specific Git SHA as the tag for deployment
-            IMAGE_TAG=${{ github.sha }}
-          script: |
-            # 1. Login to ECR on the EC2 instance
-            # Check if ECR_REGISTRY is passed (it should be now)
-            if [ -z "$ECR_REGISTRY" ]; then
-              echo "Fatal Error: ECR_REGISTRY is missing in SSH environment."
-              exit 1
-            fi
 
-            # Use the REGION from GitHub Actions env for authentication
-            # The AWS_REGION is a job-level env set earlier: ${{ env.AWS_REGION }}
-            ECR_PASSWORD=$(aws ecr get-login-password --region ${{ env.AWS_REGION }})
+          # 💡 FIX: Inject ECR_REGISTRY, ECR_REPOSITORY, and IMAGE_TAG directly into the script.
+          # We use a unique SHA tag and the required ECR registry URL.
+          script: |
+            # 1. Define Variables on the Remote Host (Injected from GitHub Actions Context)
+            ECR_REGISTRY="${{ steps.login-ecr.outputs.registry }}"
+            ECR_REPOSITORY="${{ env.ECR_REPOSITORY }}"
+            IMAGE_TAG="${{ github.sha }}"
+            AWS_REGION="${{ env.AWS_REGION }}"
+
+            echo "--- Starting Deployment ---"
+            echo "Registry: $ECR_REGISTRY"
+            echo "Image Tag: $IMAGE_TAG"
+
+            # 2. AWS CLI ECR Login
+            # NOTE: This relies on the EC2 IAM Role having ECR Read permissions
+            ECR_PASSWORD=$(aws ecr get-login-password --region $AWS_REGION)
 
             if [ $? -ne 0 ]; then
-              echo "Error: AWS ECR login failed."
+              echo "Error: AWS ECR login failed. Check IAM permissions."
               exit 1
             fi
 
-            # 2. Execute docker login command using the variable
+            # 3. Docker Login (Requires the ECR_REGISTRY variable to be present)
             echo "$ECR_PASSWORD" | docker login --username AWS --password-stdin "$ECR_REGISTRY"
 
             if [ $? -ne 0 ]; then
@@ -88,17 +88,20 @@ jobs:
               exit 1
             fi
 
-            # 3. Pull and Run the image (as before, but now with correct variables)
+            # 4. Pull and Run the Image
             FULL_IMAGE_NAME="$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+            echo "Pulling image: $FULL_IMAGE_NAME"
             docker pull $FULL_IMAGE_NAME
 
-            # 3. Stop and remove the old container 
+            # 5. Stop and remove the old container 
             docker stop affiliate-wallet-app || true
             docker rm affiliate-wallet-app || true
 
-            # 4. Run the new container 
+            # 6. Run the new container 
             docker run -d \
               --name affiliate-wallet-app \
               -p 3011:3011 \
               -e PORT=3011 \
               $FULL_IMAGE_NAME
+
+            echo "--- Deployment Complete ---"
