@@ -24,6 +24,9 @@ COPY --from=deps /app/node_modules ./node_modules
 
 COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* ./
 
+# Copy your Prisma schema before generate
+COPY --from=builder /app/prisma ./prisma
+
 COPY . .
 
 
@@ -45,7 +48,7 @@ WORKDIR /app
 # Add OpenSSL for runtime
 RUN apk add --no-cache openssl
 
-COPY --from=builder /app/prisma ./prisma
+
 
 # Copy build artifacts
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
