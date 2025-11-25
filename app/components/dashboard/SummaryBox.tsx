@@ -10,6 +10,10 @@ interface props {
 
 export const SummaryBox = (props: props) => {
   const [loginAffiliate, setLoginAffiliate] = useState<any>();
+
+  console.log(typeof props.affiliate_id);
+  console.log("This is Affiliate Id in summary box: ", props.affiliate_id);
+
   useEffect(() => {
     const getAffiliate = async () => {
       const affilateData = await getAffiliateDetails(props.affiliate_id);

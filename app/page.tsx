@@ -8,14 +8,13 @@ import Sidebar from "./components/dashboard/Sidebar";
 import { useSearchParams } from "next/navigation";
 
 export default function Home() {
-  const [affiliateType, setAffiliteType] = useState("Referral");
   const [checkAffT, setCheckAffT] = useState();
 
   const searchParams: any = useSearchParams();
   const affiliateID = parseInt(searchParams.get("uid"));
   //const affiliateID = 1111;
 
-  console.log(typeof affiliateID);
+  //console.log(typeof affiliateID);
 
   return (
     <div className="min-h-screen bg-gray-50">
