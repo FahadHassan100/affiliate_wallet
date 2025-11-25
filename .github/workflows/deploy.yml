@@ -58,25 +58,44 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           # 💡 IMPORTANT FIX: Pass the necessary variables to the remote host
-          envs: ECR_REGISTRY, ECR_REPOSITORY, IMAGE_TAG
+          envs: |
+            ECR_REGISTRY=${{ steps.login-ecr.outputs.registry }}
+            ECR_REPOSITORY=${{ env.ECR_REPOSITORY }}
+            # Use the specific Git SHA as the tag for deployment
+            IMAGE_TAG=${{ github.sha }}
           script: |
-            # 1. Login to ECR on the EC2 instance
-            # NOTE: Assuming AWS CLI is configured on EC2
-            $(aws ecr get-login-password --region ${{ env.AWS_REGION }} | docker login --username AWS --password-stdin $ECR_REGISTRY)
+            # 1. FIX: Use AWS CLI to get ECR login password and pipe it directly to docker login
+            # Ensure AWS CLI is installed and configured on the EC2 instance
+            # NOTE: This command assumes your EC2 instance's IAM Role has permissions 
+            #       to access ECR (ecr:GetAuthorizationToken).
+
+            # Use the REGION from GitHub Actions env for authentication
+            ECR_PASSWORD=$(aws ecr get-login-password --region ${{ env.AWS_REGION }})
+
+            if [ $? -ne 0 ]; then
+              echo "Error: AWS ECR login failed. Check AWS CLI and IAM permissions on EC2."
+              exit 1
+            fi
+
+            echo $ECR_PASSWORD | docker login --username AWS --password-stdin $ECR_REGISTRY
+
+            if [ $? -ne 0 ]; then
+              echo "Error: Docker login failed."
+              exit 1
+            fi
 
             # 2. Pull the NEW, immutable, SHA-tagged image
-            docker pull $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+            # The full image reference is now correctly formatted and pulled
+            FULL_IMAGE_NAME="$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+            docker pull $FULL_IMAGE_NAME
 
-            # 3. Tag the new image as 'latest' locally (Optional, but useful)
-            docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:latest
-
-            # 4. Stop and remove the old container (ignore errors if it doesn't exist)
+            # 3. Stop and remove the old container 
             docker stop affiliate-wallet-app || true
             docker rm affiliate-wallet-app || true
 
-            # 5. Run the new container using the SHA tag (or the newly tagged 'latest')
+            # 4. Run the new container 
             docker run -d \
               --name affiliate-wallet-app \
               -p 3011:3011 \
               -e PORT=3011 \
-              $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+              $FULL_IMAGE_NAME

@@ -11,9 +11,9 @@ export default function Home() {
   const [affiliateType, setAffiliteType] = useState("Referral");
   const [checkAffT, setCheckAffT] = useState();
 
-  const searchParams = useSearchParams();
-  //const userId = searchParams.get("uid");
-  const affiliateID = 1111;
+  const searchParams: any = useSearchParams();
+  const affiliateID = parseInt(searchParams.get("uid"));
+  //const affiliateID = 1111;
 
   return (
     <div className="min-h-screen bg-gray-50">
