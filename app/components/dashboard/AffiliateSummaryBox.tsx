@@ -8,6 +8,7 @@ interface props {
 const AffiliateSummaryBox = (props: props) => {
   const [totalAffCommission, setTotalAffCommission] = useState(0);
   const [totalAffOverride, setTotalAffOverride] = useState(0);
+  const [check, setCheck] = useState();
 
   useEffect(() => {
     const getAffCommission = async () => {
