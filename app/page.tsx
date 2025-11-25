@@ -15,7 +15,7 @@ export default function Home() {
   const affiliateID = parseInt(searchParams.get("uid"));
   //const affiliateID = 1111;
 
-  console.log("This is login Affiliate:", affiliateID);
+  console.log(typeof affiliateID);
 
   return (
     <div className="min-h-screen bg-gray-50">
