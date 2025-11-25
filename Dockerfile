@@ -43,8 +43,9 @@ FROM base AS runner
 WORKDIR /app
 
 # Add OpenSSL for runtime
-# RUN apk add --no-cache openssl
+RUN apk add --no-cache openssl
 
+COPY --from=builder /app/prisma ./prisma
 
 # Copy build artifacts
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
