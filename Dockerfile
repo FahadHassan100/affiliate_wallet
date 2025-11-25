@@ -29,7 +29,7 @@ COPY . .
 
 
 # Generate Prisma client with the correct binary
-RUN npx prisma generate
+RUN npx prisma generate --schema=./prisma/schema.prisma --skip-install
 
 # Build the Next.js app
 RUN \
@@ -51,8 +51,6 @@ RUN apk add --no-cache openssl
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
-# Copy the public directory to serve static assets
-# COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 ENV PORT=3011
 
 EXPOSE 3011
