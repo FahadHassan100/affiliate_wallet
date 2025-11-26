@@ -50,6 +50,7 @@ RUN apk add --no-cache openssl
 # Copy build artifacts
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 
 ENV PORT=3011
 
