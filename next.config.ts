@@ -4,7 +4,6 @@ const nextConfig:NextConfig = {
   /* config options here */
   assetPrefix: '/my-wallet',
   // 2. Set basePath (Next.js 12+) to handle subpath routing
-  basePath: '/my-wallet',
 
   // 3. Configure Images to respect the subpath for internal routing/optimization
   images: {
