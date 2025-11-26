@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { SummaryBox } from "./components/dashboard/SummaryBox";
 import { OrdersTable } from "./components/dashboard/OrdersTable";
-import logoImage from "..my-wallet/public/logo.png";
+import logoImage from "../my-wallet/public/logo.png";
 import Image from "next/image";
 import Sidebar from "./components/dashboard/Sidebar";
 import { useSearchParams } from "next/navigation";
