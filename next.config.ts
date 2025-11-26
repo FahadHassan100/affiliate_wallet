@@ -3,6 +3,9 @@ import type { NextConfig } from "next";
 const nextConfig:NextConfig = {
   /* config options here */
   assetPrefix: '/my-wallet',
+  env: {
+    NEXT_PUBLIC_ASSET_PREFIX: '/my-wallet',
+  },
   output: "standalone",
   experimental: {
     serverActions: {
