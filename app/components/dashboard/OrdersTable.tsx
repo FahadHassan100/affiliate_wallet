@@ -1,6 +1,13 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import ActionDotButton from "../ActionDotButton";
+import { getCommissionRecords } from "@/services/CRUD";
+import Tooltip from "@mui/material/Tooltip";
+
+interface props {
+  affiliate_id: number;
+}
+
 // Sample data for the table
 const orders = [
   {
@@ -59,7 +66,52 @@ const orders = [
     status: "Completed",
   },
 ];
-export const OrdersTable = () => {
+export const OrdersTable = (props: props) => {
+  const [commissionRecords, setCommissionRecords] = useState<any[]>();
+  const affiliate_ID = props.affiliate_id;
+
+  useEffect(() => {
+    const getAllCommissionRecords = async () => {
+      const commissionData: any = await getCommissionRecords(
+        props.affiliate_id
+      );
+      //console.log(commissionData);
+      setCommissionRecords(commissionData);
+    };
+
+    getAllCommissionRecords();
+  }, []);
+
+  function numberWithCommas(x: number) {
+    return x.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
+  }
+
+  let toolTipDiv = (
+    PPI: string,
+    commissionType: string,
+    commission: string,
+    affiliateID: number,
+    commissionAmount: number
+  ) => {
+    return (
+      <>
+        <div className="w-36 flex justify-between my-3">
+          <b>Final PPI</b>
+          <p>{"$" + numberWithCommas(Number(PPI))}</p>
+        </div>
+        <div className="w-36 flex justify-between my-3">
+          <b>{commissionType}</b>
+          <p>{commission + "%"}</p>
+          {/* <p>{commission + "%"}</p> */}
+        </div>
+        <div className="w-36 flex justify-between my-3">
+          <b>Total:</b>
+          <p>{"$" + numberWithCommas(commissionAmount)}</p>
+        </div>
+      </>
+    );
+  };
+
   return (
     <div className="w-full max-w-6xl mx-auto overflow-x-auto">
       <h2 className="text-lg font-semibold mb-4 text-gray-800">Orders</h2>
@@ -124,56 +176,83 @@ export const OrdersTable = () => {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {orders.map((order) => (
-              <tr key={order.id}>
-                <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {order.clientName}
-                </td>
-                <td className="px-1 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {order.affiliateName}
-                </td>
-                <td className="px-1 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {order.donationAmount}
-                </td>
-                <td className="px-1 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {order.giftVoucher}
-                </td>
-                <td className="px-1 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {order.initialDeposit}
-                </td>
-                <td className="px-1 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {order.orderDate}
-                </td>
-                <td className="px-1 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {order.commissionOverride}
-                </td>
-                <td className="px-1 py-4 whitespace-nowrap">
-                  <span
-                    className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+            {commissionRecords &&
+              commissionRecords.map((commission) => (
+                <tr key={commission.id}>
+                  <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {commission.orders.clients.First_Name +
+                      " " +
+                      commission.orders.clients.Last_Name}
+                  </td>
+                  <td className="px-1 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {commission.affiliate.First_Name +
+                      " " +
+                      commission.affiliate.Last_Name}
+                  </td>
+                  <td className="px-1 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {commission.orders.Number_DGC}
+                  </td>
+                  <td className="px-1 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {commission.orders.Gift_Voucher}
+                  </td>
+                  <td className="px-1 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {commission.orders.Initial_Deposit}
+                  </td>
+                  <td className="px-1 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {commission.orders.Date
+                      ? new Date(commission.orders.Date).toLocaleDateString()
+                      : ""}
+                  </td>
+                  <td className="px-1 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <Tooltip
+                      title={toolTipDiv(
+                        commission.NetPPI,
+                        commission.Commission_Type,
+                        commission.Commission_Percentage,
+                        commission.Affiliate_ID,
+                        commission.Commission_Amount
+                      )}
+                      followCursor
+                    >
+                      <p>
+                        {commission.Commission_Amount === 0
+                          ? 0
+                          : "$" +
+                            numberWithCommas(commission.Commission_Amount)}
+                      </p>
+                    </Tooltip>
+                  </td>
+                  <td className="px-1 py-4 whitespace-nowrap">
+                    <span
+                      className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
                     ${
-                      order.status === "Completed"
+                      commission.orders.Status === 1
                         ? "bg-green-100 text-green-800"
-                        : order.status === "Processing"
+                        : commission.orders.Status === 4
                         ? "bg-blue-100 text-blue-800"
                         : "bg-yellow-100 text-yellow-800"
                     }`}
-                  >
-                    {order.status}
-                  </span>
-                </td>
-                <td className="px-1 py-4 whitespace-nowrap text-sm font-medium">
-                  {/* <ActionDotButton
+                    >
+                      {commission.orders.Status === 1
+                        ? "Completed"
+                        : commission.orders.Status === 4
+                        ? "Need Confirmation"
+                        : "Simulation"}
+                    </span>
+                  </td>
+                  <td className="px-1 py-4 whitespace-nowrap text-sm font-medium">
+                    {/* <ActionDotButton
                       tableName={props.tableName}
                       Order_ID={item.Order_ID}
                       HandleItemClick={props.HandleItemClick}
                       DropDownlist={actionDropDownsValues}
                     /> */}
-                  {/* <button className="text-indigo-600 hover:text-indigo-900">
+                    {/* <button className="text-indigo-600 hover:text-indigo-900">
                     View
                   </button> */}
-                </td>
-              </tr>
-            ))}
+                  </td>
+                </tr>
+              ))}
           </tbody>
         </table>
       </div>

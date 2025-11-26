@@ -23,6 +23,8 @@ model Affiliates {
   active_affiliate  Int     @default(0)
   affiliate_type    String  @db.VarChar(255)
   commission        Float   @db.Float
+
+  commissions commission[]
 }
 
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
@@ -52,6 +54,9 @@ model commission {
   Commission_Percentage Int
   Commission_Amount     Int
   created_at            DateTime @default(now()) @db.DateTime(0)
+
+  orders    Clients_Orders @relation(fields: [Order_ID], references: [Order_ID])
+  affiliate Affiliates     @relation(fields: [Affiliate_ID], references: [ID])
 }
 
 model overriding {
@@ -199,12 +204,14 @@ model Clients {
   Verify_Status    Int?      @default(0)
   verify_date      DateTime? @db.DateTime(0)
   affiliate_id     Int?      @default(0)
+
+  clients_orders Clients_Orders[]
 }
 
 model Clients_Orders {
   Order_ID                    Int       @id @default(autoincrement())
   Affiliate_ID                Int?
-  Client_ID                   Int?
+  Client_ID                   Int
   Booklet_ID                  String?   @db.VarChar(255)
   Order_Price                 Float
   Date                        DateTime? @db.Date
@@ -245,6 +252,9 @@ model Clients_Orders {
   DS_ID                       String?   @db.VarChar(10)
   Pills_Ordered               String?   @db.VarChar(255)
   Confirmation_Status         Int?      @default(0)
+
+  commissions commission[]
+  clients     Clients      @relation(fields: [Client_ID], references: [ID])
 }
 
 model Closings {

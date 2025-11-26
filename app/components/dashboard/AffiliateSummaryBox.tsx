@@ -15,7 +15,7 @@ const AffiliateSummaryBox = (props: props) => {
       const affCommission = await getAffiliateCommission(props.affiliate_id);
       if (affCommission._sum.NetPPI) {
         //setTotalAffCommission(affCommission._sum.NetPPI);
-        console.log("This is Commission", affCommission._sum.NetPPI);
+        //console.log("This is Commission", affCommission._sum.NetPPI);
       }
     };
 

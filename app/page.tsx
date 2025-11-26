@@ -11,10 +11,8 @@ export default function Home() {
   const [checkAffT, setCheckAffT] = useState();
 
   const searchParams: any = useSearchParams();
-  const affiliateID = parseInt(searchParams.get("uid"));
-  //const affiliateID = 1111;
-
-  console.log(typeof affiliateID);
+  //const affiliateID = parseInt(searchParams.get("uid"));
+  const affiliateID = 1111;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -33,7 +31,7 @@ export default function Home() {
             {/* Summary Boxes */}
             <SummaryBox affiliate_id={affiliateID} />
             {/* Orders Table */}
-            <OrdersTable />
+            <OrdersTable affiliate_id={affiliateID} />
           </div>
         </div>
       </div>
