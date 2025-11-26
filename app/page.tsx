@@ -37,7 +37,7 @@ export default function Home() {
           <div className="row">
             <div className="headerSection flex justify-center pt-2">
               <Image
-                src={`${ASSET_PATH}/public/logo.png`} // Use the dynamic path
+                src={`..${ASSET_PATH}/logo.png`} // Use the dynamic path
                 alt="logo"
                 width={300}
                 height={100} // Always include height for optimization
