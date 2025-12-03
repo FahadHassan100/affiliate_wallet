@@ -27,7 +27,7 @@ export const SummaryBox = (props: props) => {
         {loginAffiliate && loginAffiliate.affiliate_type === "Agent" ? (
           <AffiliateSummaryBox affiliate_id={props.affiliate_id} />
         ) : (
-          <ReferralSummaryBox />
+          <ReferralSummaryBox affiliate_id={props.affiliate_id} />
         )}
       </div>
     </div>

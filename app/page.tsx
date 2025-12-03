@@ -12,7 +12,7 @@ export default function Home() {
 
   const searchParams: any = useSearchParams();
   //const affiliateID = parseInt(searchParams.get("uid"));
-  const affiliateID = 1111;
+  const affiliateID = 1001;
 
   // Define the asset path based on where the app is deployed
   const ASSET_PATH =

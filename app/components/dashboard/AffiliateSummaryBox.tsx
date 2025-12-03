@@ -1,4 +1,8 @@
-import { getAffiliateCommission, getAffiliateOverride } from "@/services/CRUD";
+import {
+  getAffiliateCommission,
+  getAffiliateOverride,
+  getTotalAffiliateCommission,
+} from "@/services/CRUD";
 import React, { useEffect, useState } from "react";
 
 interface props {
@@ -8,7 +12,7 @@ interface props {
 const AffiliateSummaryBox = (props: props) => {
   const [totalAffCommission, setTotalAffCommission] = useState(0);
   const [totalAffOverride, setTotalAffOverride] = useState(0);
-  const [check, setCheck] = useState();
+  const [totalCom, setTotalCom] = useState(0);
 
   useEffect(() => {
     const getAffCommission = async () => {
@@ -27,6 +31,18 @@ const AffiliateSummaryBox = (props: props) => {
       }
     };
 
+    const getTotalAffCommission = async () => {
+      const totalAffCommission = await getTotalAffiliateCommission(
+        props.affiliate_id
+      );
+      if (totalAffCommission._sum.NetPPI) {
+        setTotalCom(totalAffCommission._sum.NetPPI);
+        //setTotalAffCommission(affCommission._sum.NetPPI);
+        //console.log("This is Commission", affCommission._sum.NetPPI);
+      }
+    };
+
+    getTotalAffCommission();
     getAffCommission();
     getAffOverride();
   }, []);
@@ -36,6 +52,18 @@ const AffiliateSummaryBox = (props: props) => {
       <h2 className="text-lg text-center font-semibold mb-4 text-gray-800">
         Affiliate Summary
       </h2>
+      <div className="text-center">
+        <div className="flex-1">
+          <p className="text-sm text-gray-500">Total</p>
+          <p className="text-2xl font-bold text-gray-900">
+            $
+            {totalCom.toLocaleString(undefined, {
+              minimumFractionDigits: 0,
+              maximumFractionDigits: 0,
+            })}
+          </p>
+        </div>
+      </div>
       <div className="flex justify-between text-center mt-10">
         <div className="flex-1">
           <p className="text-sm text-gray-500">Commission</p>

@@ -56,6 +56,24 @@ export const getAffiliateOverride = async (aff_id: number) => {
 
 }
 
+export const getTotalAffiliateCommission = async (aff_id: number) => {
+    
+    try {
+
+        const total_commission = await db.commission.aggregate({
+          _sum: {NetPPI: true},
+          where: {
+            Affiliate_ID: aff_id,
+          }
+        });
+        return total_commission;
+
+    } catch (error) {
+        throw error
+    }
+
+}
+
 export const getAllAffiliates = async () => {
     
     try {

@@ -1,9 +1,14 @@
 import React, { useEffect, useState } from "react";
 
-const ReferralSummaryBox = () => {
+interface props {
+  affiliate_id: number;
+}
+
+const ReferralSummaryBox = (props: props) => {
   const [sliderValue, setSliderValue] = useState(50); // Default to 50%
   const [cashAmount, setCashAmount] = useState(0);
   const [giftVoucherAmount, setGiftVoucherAmount] = useState(0);
+
   // Sample FinalPPI value
   const finalPPI = 2000;
   // Calculate cash and gift voucher amounts when slider changes
@@ -19,6 +24,18 @@ const ReferralSummaryBox = () => {
       <h2 className="text-lg text-center font-semibold mb-4 text-gray-800">
         Referral Summary
       </h2>
+      <div className="text-center">
+        <div className="flex-1">
+          <p className="text-sm text-gray-500">Total</p>
+          <p className="text-2xl font-bold text-gray-900">
+            $
+            {finalPPI.toLocaleString(undefined, {
+              minimumFractionDigits: 0,
+              maximumFractionDigits: 0,
+            })}
+          </p>
+        </div>
+      </div>
       <div className="flex justify-between mb-4 text-center mt-5">
         <div className="flex-1">
           <p className="text-sm text-gray-500">Cash</p>
