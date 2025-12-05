@@ -6,13 +6,14 @@ import logoImage from "../public/logo.png";
 import Image from "next/image";
 import Sidebar from "./components/dashboard/Sidebar";
 import { useSearchParams } from "next/navigation";
+import TempTable from "./components/dashboard/TempTable";
 
 export default function Home() {
   const [checkAffT, setCheckAffT] = useState();
 
   const searchParams: any = useSearchParams();
   //const affiliateID = parseInt(searchParams.get("uid"));
-  const affiliateID = 1001;
+  const affiliateID = 1111;
 
   // Define the asset path based on where the app is deployed
   const ASSET_PATH =
@@ -50,6 +51,8 @@ export default function Home() {
             <SummaryBox affiliate_id={affiliateID} />
             {/* Orders Table */}
             <OrdersTable affiliate_id={affiliateID} />
+            {/* Orders Table */}
+            <TempTable affiliate_id={affiliateID} />
           </div>
         </div>
       </div>

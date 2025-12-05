@@ -202,7 +202,7 @@ model Clients {
   SI_Number        String?   @db.VarChar(9)
   Source           Int       @default(0) @db.TinyInt
   Verify_Status    Int?      @default(0)
-  verify_date      DateTime? @db.DateTime(0)
+  verify_date      DateTime? @ignore @db.DateTime(0)
   affiliate_id     Int?      @default(0)
 
   clients_orders Clients_Orders[]
@@ -220,8 +220,8 @@ model Clients_Orders {
   Promo_Code                  String?   @db.VarChar(10)
   Promo_Price                 Float     @db.Float
   Payment_Method              String?   @db.VarChar(10)
-  UpdateDate                  DateTime? @db.Timestamp(0)
-  UpdateSaleDate              DateTime  @db.Date
+  UpdateDate                  DateTime  @ignore @db.Timestamp(0)
+  UpdateSaleDate              DateTime  @ignore @db.Date
   Payment_Status              Int?      @default(0)
   Agreement_String            String?   @db.VarChar(75)
   Process_Status              Int?      @default(0)
@@ -1071,7 +1071,7 @@ model temp_clients {
   login_method           Int
   current_step           Int
   actual_step            Int
-  verify_date            DateTime  @db.DateTime(0)
+  verify_date            DateTime  @ignore @db.DateTime(0)
   first_login            Int       @default(0)
   LoginCredentialsStatus Int
   Cash_Donation          Float     @db.Float
@@ -1081,7 +1081,7 @@ model temp_clients {
   Gift_Voucher_ID        String    @db.VarChar(100)
   Final_PPI              Int?      @default(0)
   Date                   DateTime? @db.Date
-  Expiry_Date            DateTime? @db.Date
+  Expiry_Date            DateTime? @ignore @db.Date
 }
 
 model temp_contract {
